@@ -93,8 +93,8 @@
       <v-col cols="2"></v-col>
       <v-col cols="8" align="center">
         <v-text-field class="rounded-lg" append-inner-icon="mdi-map-marker" style="background-color:pink" 
-         label="Celcius-to-Farenheit Converter" type="input">
-          <input id=celcius>
+         label="Celcius to Farenheit Converter" type="input">
+          <input id=pascal>
         </v-text-field>
         <v-btn class="text-shadow"  :disabled="!form"
           :loading="loading"
@@ -102,7 +102,7 @@
           size="large"
           type="submit"
           variant="compact" block
-          > Submit</v-btn>
+          >Convert </v-btn>
       </v-col>
       <v-col cols="2"></v-col>
     </v-row>
@@ -114,6 +114,7 @@
             <v-col>
               <v-card-item>
                 <span class="text-shadow">{{ temperature }}</span>
+                <!-- <v-btn title="Convert" @click="Tempconvert()"></v-btn> -->
               </v-card-item>
             </v-col>
             <v-col>
@@ -191,10 +192,19 @@ const presChart= ref(null); //pressure chart object
 const altChart=ref(null);
 const soilChart= ref(null);
 
+var Tempstate=0;
+
+
 //COMPUTED
 const temperature = computed(() => {
   if (!!payload.value) {
-    return `${payload.value.temperature.toFixed(2)} °C`;
+    if(Tempstate==1){
+      temperature=(temp*9/5)+32
+      return  `${payload.value.temperature.toFixed(2)} °F`;
+    }
+    else{
+      return `${payload.value.temperature.toFixed(2)} °C`;
+    }
   }
 });
 const heatindex = computed(() => {
@@ -225,7 +235,14 @@ const soilmoisture = computed(() => {
   }
 });
 
-
+// const Tempconvert = async () => {
+//     if(Tstate == 0){
+//         Tstate = 1;
+//     }
+//     else{
+//         Tstate = 0;
+//     }
+// };
 
 // FUNCTIONS
 onMounted(()=>{
@@ -260,6 +277,15 @@ function reloadtime(){
   window.location.reload();
 }, 30000);
 }
+
+// const PressureConvert= async()=>{
+//   if(Pstate == 0){
+//         Pstate = 1;
+//     }
+//     else{
+//         Pstate = 0;
+//     }
+// }
 const CreateCharts = async () => {
   // TEMPERATURE CHART
   tempHiChart.value = Highcharts.chart("container1", {
@@ -412,6 +438,9 @@ const CreateCharts4 = async () => {
   });
 };
 
+const updateconvert= async () =>{
+
+}
 
 //WATCHERS
 watch(payload,(data)=> {

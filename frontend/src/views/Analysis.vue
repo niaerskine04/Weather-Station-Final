@@ -50,30 +50,6 @@
                     </VCardItem>
                 </VCard>
                <div></div>
-                <VCard title="Heat Index" width="160" variant="outlined" style="background-color:hotpink" density="compact" rounded="lg">
-                    <VCardItem >
-                        <VChipGroup class=" d-flex flex-row justify-center" size="compact" color="primaryContainer" variant="flat">
-                            <VTooltip text="Min" location="start" >
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ heatindex.min }}</v-chip>
-                              </template>
-                            </VTooltip>
-                            <VTooltip text="Range" location="top">
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ heatindex.range }}</v-chip>
-                              </template>
-                            </VTooltip>
-                            <VTooltip text="Max" location="end">
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ heatindex.max }}</v-chip>
-                              </template>
-                            </VTooltip>
-                        </VChipGroup>
-                    </VCardItem>
-                    <VCardItem align="center">
-                        <span class="text-h3 text-shadow" >{{ heatindex.avg }}</span>
-                    </VCardItem>
-                </VCard>
             </VCol>
         </VRow>
         <VRow>
@@ -129,8 +105,8 @@
             </VCol>
         </VRow>
         <VRow>
-          <VCol class="col col3" cols="2" align="center">
-            <VCard title="Pressure" width="160" variant="outlined" style="background-color:lavender" color="#000000" density="compact" rounded="lg">
+          <VCol class="col col3" cols="3" align="center">
+            <VCard title="Pressure" width="230" variant="outlined" style="background-color:lavender" color="#000000" density="compact" rounded="lg">
                     <VCardItem class="mb-n2">
                         <VChipGroup class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
                             <VTooltip text="Min" location="start" >
@@ -154,41 +130,17 @@
                         <span class="text-h3 text-shadow ">{{ pressure.avg }}</span>
                     </VCardItem>
                 </VCard>
-                <VCard title="Altitude" width="160" variant="outlined" style="background-color: lavender" density="compact" rounded="lg">
-                    <VCardItem class="mb-n2">
-                        <VChipGroup class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
-                            <VTooltip text="Min" location="start" >
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ altitude.min }}</v-chip>
-                              </template>
-                            </VTooltip>
-                            <VTooltip text="Range" location="top" >
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ altitude.range }}</v-chip>
-                              </template>
-                            </VTooltip>
-                            <VTooltip text="Max" location="end">
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ altitude.max }}</v-chip>
-                              </template>
-                            </VTooltip>
-                        </VChipGroup>
-                    </VCardItem>
-                    <VCardItem align="center">
-                        <span class="text-h3 text-primary ">{{ altitude.avg }}</span>
-                    </VCardItem>
-                </VCard>
             </VCol>
-            <VCol class="col col2" cols="5" br >
+            <VCol class="col col2" cols="9" br >
                 <figure class="highcharts-figure">
                     <div id="container5"></div>
                 </figure>
             </VCol>
-            <VCol class=" col col3" cols="5" br>
+            <!-- <VCol class=" col col3" cols="5" br>
               <figure class="highcharts-figure">
                     <div id="container6"></div>
               </figure>
-            </VCol>
+            </VCol> -->
         </VRow>
         <VRow>
           <VCol class="col col1" cols="12" br >
@@ -198,42 +150,17 @@
           </VCol>
         </VRow>
         <VRow>
-          <VCol class="col col1" cols="5" br >
+          <VCol class="col col1" cols="6" br >
                 <figure class="highcharts-figure">
                     <div id="container8"></div>
                 </figure>
           </VCol>
-          <VCol class="col col2" cols="5" br >
+          <VCol class="col col2" cols="6" br >
                 <figure class="highcharts-figure">
                     <div id="container9"></div>
                 </figure>
           </VCol>
-          <VCol class="col col3" cols="2">
-            <VCard title="Soil M" width="160" variant="outlined" style="background-color:lightcyan" density="compact" rounded="lg">
-                    <VCardItem class="mb-n2">
-                        <VChipGroup class="d-flex flex-row justify-center" color="primaryContainer" variant="flat">
-                            <VTooltip text="Min" location="start" >
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ soilmoisture.min }}</v-chip>
-                              </template>
-                            </VTooltip>
-                            <VTooltip text="Range" location="top" >
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ soilmoisture.range }}</v-chip>
-                              </template>
-                            </VTooltip>
-                            <VTooltip text="Max" location="end">
-                              <template v-slot:activator="{ props }">
-                                <v-chip v-bind="props">{{ soilmoisture.max }}</v-chip>
-                              </template>
-                            </VTooltip>
-                        </VChipGroup>
-                    </VCardItem>
-                    <VCardItem align="center">
-                        <span class="text-h3 text-primary ">{{ soilmoisture.avg }}</span>
-                    </VCardItem>
-                </VCard>
-          </VCol>
+
         </VRow>
     </VContainer>
   </template> 
@@ -266,6 +193,7 @@ import { useRoute, useRouter } from "vue-router";
 
 // VARIABLES
 const Mqtt = useMqttStore();
+const { payload, payloadTopic } = storeToRefs(Mqtt);
 const AppStore = useAppStore();
 const router = useRouter();
 const route = useRoute();
@@ -540,35 +468,35 @@ const CreateCharts = async () => {
     ],
   });
 
-  altLine.value = Highcharts.chart("container6", {
-    chart: { zoomType: "x" },
-    title: { text: "Altitude Analysis", align: "left" },
-    yAxis: {
-      title: {
-        text: "Altitude",
-        style: { color: "#000000" },
-      },
-      labels: { format: "{value} m" },
-    },
+  // altLine.value = Highcharts.chart("container6", {
+  //   chart: { zoomType: "x" },
+  //   title: { text: "Altitude Analysis", align: "left" },
+  //   yAxis: {
+  //     title: {
+  //       text: "Altitude",
+  //       style: { color: "#000000" },
+  //     },
+  //     labels: { format: "{value} m" },
+  //   },
 
-    tooltip: {
-      pointFormat: "Altitude: {point.x} m ",
-    },
-    xAxis: {
-      type: "datetime",
-      title: { text: "Time", style: { color: "#000000" } },
-    },
-    tooltip: { shared: true },
-    series: [
-      {
-        name: "Altitude",
-        type: "line",
-        data: [],
-        turboThreshold: 0,
-        color: Highcharts.getOptions().colors[6],
-      },
-    ],
-  });
+  //   tooltip: {
+  //     pointFormat: "Altitude: {point.x} m ",
+  //   },
+  //   xAxis: {
+  //     type: "datetime",
+  //     title: { text: "Time", style: { color: "#000000" } },
+  //   },
+  //   tooltip: { shared: true },
+  //   series: [
+  //     {
+  //       name: "Altitude",
+  //       type: "line",
+  //       data: [],
+  //       turboThreshold: 0,
+  //       color: Highcharts.getOptions().colors[6],
+  //     },
+  //   ],
+  // });
 
   Altareaspline.value = Highcharts.chart("container7", {
     chart: { zoomType: "x" },
@@ -758,6 +686,8 @@ const updateLineCharts = async () => {
     soilLine.value.series[0].setData(soilmoisture);
     soilHumsspline.value.series[0].setData(humidity);
     soilHumsspline.value.series[1].setData(soilmoisture);
+    humtempspline.value.series[0].setData(temperature);
+    humtempspline.value.series[1].setData(humidity);
 
   }
 };
@@ -770,15 +700,20 @@ const updateCards = async () => {
     let endDate = new Date(end.value).getTime() / 1000;
     // 2. Fetch data from backend by calling the API functions
     const temp = await AppStore.getTemperatureMMAR(startDate, endDate);
+    //const heat= await AppStore.getHeatIndexMMAR(startDate,endDate);
     const humid = await AppStore.getHumidityMMAR(startDate, endDate);
     const pres= await AppStore.getPressureMMAR(startDate, endDate);
     const alt= await AppStore.getAltitudeMMAR(startDate,endDate);
     const soil= await AppStore.getSoilMoistureMMAR(startDate, endDate);
-    console.log(temp);
+    //console.log(temp);
     temperature.max = temp[0].max.toFixed(1);
     temperature.min = temp[0].min.toFixed(1);
     temperature.avg = temp[0].avg.toFixed(1);
     temperature.range = temp[0].range.toFixed(1);
+    // heatindex.max = heat[0].max.toFixed(1);
+    // heatindex.min= heat[0].min.toFixed(1);
+    // heatindex.avg = heat[0].avg.toFixed(1);
+    // heatindex.range = heat[0].range.toFixed(1);
     humidity.max = humid[0].max.toFixed(1);
     humidity.min = humid[0].min.toFixed(1);
     humidity.avg = humid[0].avg.toFixed(1);

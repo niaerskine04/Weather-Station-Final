@@ -62,7 +62,7 @@
 #define TFT_MISO 19
 Adafruit_ILI9341 tft = Adafruit_ILI9341(TFT_CS, TFT_DC, TFT_MOSI, TFT_SCK, TFT_RST, TFT_MISO);
 
-#define DHT_OUT 15
+#define DHT_OUT 4
 #define DHTTYPE DHT22
 DHT dht(DHT_OUT, DHTTYPE);
 
@@ -73,10 +73,10 @@ DHT dht(DHT_OUT, DHTTYPE);
 
 Adafruit_BMP280 bmp;  // I2C Interface
 
-#define SOIL_OUT 33
+#define SOIL_OUT 32
 
-#define BTN_A 25
-#define BTN_B 26
+// #define BTN_A 25
+// #define BTN_B 26
 
 //SECTION 3: MQTT LABELS, CREDENTIALS AND HANDLES
 static const char* pubtopic = "620155827";                         // Add your ID number here
@@ -85,11 +85,11 @@ static const char* mqtt_server = "www.yanacreations.com";          // Broker IP 
 static uint16_t mqtt_port = 1883;
 
 // WIFI CREDENTIALS
-const char* ssid       = "CWC-6848515"; // Add your Wi-Fi ssid
-const char* password   = "ddcdwwSWg4cb"; // Add your Wi-Fi password
+// const char* ssid       = "CWC-6848515"; // Add your Wi-Fi ssid
+// const char* password   = "ddcdwwSWg4cb"; // Add your Wi-Fi password
 
-// const char* ssid = "MonaConnect";  // Add your Wi-Fi ssid
-// const char* password = "";         // Add your Wi-Fi password
+const char* ssid = "MonaConnect";  // Add your Wi-Fi ssid
+const char* password = "";         // Add your Wi-Fi password
 
 // TASK HANDLES
 TaskHandle_t xMQTT_Connect = NULL;

@@ -67,10 +67,10 @@ class DB:
     def getAllInRange(self,start, end):
         '''RETURNS A LIST OF OBJECTS. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
-            start = int(start)
-            end = int(end)
+            start=int(start)
+            end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.weather.find({'timestamp': {'$gte': start, '$lte': end}},{'_id': 0}).sort('timestamp', 1))
+            result      = list(remotedb.ELET2415.weather.find({"timestamp": {'$gte': start, '$lte': end}},{'_id':0}).sort('timestamp', 1))
         except Exception as e:
             msg = str(e)
             print("getAllInRange error ",msg)            
@@ -81,94 +81,228 @@ class DB:
     def humidityMMAR(self,start, end):
         '''RETURNS MIN, MAX, AVG AND RANGE FOR HUMIDITY. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
-            start = int(start)
-            end = int(end)
+            start=int(start)
+            end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
             result      = list(remotedb.ELET2415.weather.aggregate( [
-                {'$match': {'timestamp': {'$gte': start, '$lte': end}}},
-                {'$group': {'_id':0, 'humidity': {'$push': '$$ROOT.humidity'}}},
-                {'$project': {'max': {'$max': '$humidity'}, 'min': {'$min': '$humidity'}, 'avg': {'$avg': '$humidity'}, 
-                              'range': {'$subtract': [{'$max': '$humidity'}, {'$min': '$humidity'}]}}}]))
+            {
+                '$match': {
+                    'timestamp': {
+                        '$gte': start, 
+                        '$lte': end
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': 'humidity', 
+                    'humidity': {
+                        '$push': "$$ROOT.humidity"
+                    }
+                }
+            }, {
+                '$project': {
+                    'max': {
+                        '$max': '$humidity'
+                    }, 
+                    'min': {
+                        '$min': '$humidity'
+                    }, 
+                    'avg': {
+                        '$avg': '$humidity'
+                    }, 
+                    'range': {
+                        '$subtract': [
+                            {
+                                '$max': '$humidity'
+                            }, {
+                                '$min': '$humidity'
+                            }
+                        ]
+                    }
+                }
+            }
+        ]))
         except Exception as e:
             msg = str(e)
-            print("humidityMMAR error ",msg)            
+            print("humidityMMAS error ",msg)            
         else:                  
             return result
         
     def temperatureMMAR(self,start, end):
         '''RETURNS MIN, MAX, AVG AND RANGE FOR TEMPERATURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
-            start = int(start)
-            end = int(end)
+            start=int(start)
+            end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.weather.aggregate( [
-                {'$match': {'timestamp': {'$gte': start, '$lte': end}}},
-                {'$group': {'_id':0, 'temperature': {'$push': '$$ROOT.temperature'}}},
-                {'$project': {'max': {'$max': '$temperature'}, 'min': {'$min': '$temperature'}, 'avg': {'$avg': '$temperature'}, 
-                              'range': {'$subtract': [{'$max': '$temperature'}, {'$min': '$temperature'}]}}}]))
+            result = list(remotedb.ELET2415.weather.aggregate([{ '$match': { 'timestamp': { '$gte': start, '$lte': end } } },
+                                                                { '$group': { '_id': 0, 'temperature': 
+                                                                             { '$push': '$$ROOT.temperature' } } },
+                                                                               { '$project': { 'max': { '$max': '$temperature' },
+                                                                                               'min': { '$min': '$temperature' },
+                                                                                                 'avg': { '$avg': '$temperature' },
+                                                                                                   'range': { '$subtract': [ { '$max': '$temperature' }, 
+                                                                                                                            { '$min': '$temperature' } ] } } } ]))
         except Exception as e:
-            msg = int(e)
-            print("temperatureMMAR error ",msg)            
+            msg = str(e)
+            print("temperatureMMAS error ",msg)            
         else:                  
             return result
-        
-    def heatindexMMAR(self,start, end):
-        '''RETURNS MIN, MAX, AVG AND RANGE FOR PRESSURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
-        try:
-            start = int(start)
-            end = int(end)
-            remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.weather.aggregate( [
-                {'$match': {'timestamp': {'$gte': start, '$lte': end}}},
-                {'$group': {'_id':0, 'heatindex': {'$push': '$$ROOT.heatindex'}}},
-                {'$project': {'max': {'$max': '$heatindex'}, 'min': {'$min': '$heatindex'}, 'avg': {'$avg': '$pressure'}, 
-                              'range': {'$subtract': [{'$max': '$heatindex'}, {'$min': '$heatindex'}]}}}]))
-        except Exception as e:
-            msg = int(e)
-            print("heatindexMMAR error ",msg)            
-        else:                  
-            return result
-        
+
     def pressureMMAR(self,start, end):
         '''RETURNS MIN, MAX, AVG AND RANGE FOR PRESSURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
-            start = int(start)
-            end = int(end)
+            start=int(start)
+            end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
             result      = list(remotedb.ELET2415.weather.aggregate( [
-                {'$match': {'timestamp': {'$gte': start, '$lte': end}}},
-                {'$group': {'_id':0, 'pressure': {'$push': '$$ROOT.pressure'}}},
-                {'$project': {'max': {'$max': '$pressure'}, 'min': {'$min': '$pressure'}, 'avg': {'$avg': '$pressure'}, 
-                              'range': {'$subtract': [{'$max': '$pressure'}, {'$min': '$pressure'}]}}}]))
+            {
+                '$match': {
+                    'timestamp': {
+                        '$gte': start, 
+                        '$lte': end
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': 'pressure', 
+                    'pressure': {
+                        '$push': "$$ROOT.pressure"
+                    }
+                }
+            }, {
+                '$project': {
+                    'max': {
+                        '$max': '$pressure'
+                    }, 
+                    'min': {
+                        '$min': '$pressure'
+                    }, 
+                    'avg': {
+                        '$avg': '$pressure'
+                    }, 
+                    'range': {
+                        '$subtract': [
+                            {
+                                '$max': '$pressure'
+                            }, {
+                                '$min': '$pressure'
+                            }
+                        ]
+                    }
+                }
+            }
+        ]))
         except Exception as e:
-            msg = int(e)
-            print("pressureMMAR error ",msg)            
+            msg = str(e)
+            print("pressureMMAS error ",msg)            
         else:                  
             return result
-    
+        
     def altitudeMMAR(self,start, end):
         '''RETURNS MIN, MAX, AVG AND RANGE FOR ALTITUDE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
-            start = int(start)
-            end = int(end)
+            start=int(start)
+            end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
             result      = list(remotedb.ELET2415.weather.aggregate( [
-                {'$match': {'timestamp': {'$gte': start, '$lte': end}}},
-                {'$group': {'_id':0, 'altitude': {'$push': '$$ROOT.altitude'}}},
-                {'$project': {'max': {'$max': '$altitude'}, 'min': {'$min': '$altitude'}, 'avg': {'$avg': '$altitude'}, 
-                              'range': {'$subtract': [{'$max': '$altitude'}, {'$min': '$altitude'}]}}}]))
+            {
+                '$match': {
+                    'timestamp': {
+                        '$gte': start, 
+                        '$lte': end
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': 'altitude', 
+                    'pressure': {
+                        '$push': "$$ROOT.altitude"
+                    }
+                }
+            }, {
+                '$project': {
+                    'max': {
+                        '$max': '$altitude'
+                    }, 
+                    'min': {
+                        '$min': '$altitude'
+                    }, 
+                    'avg': {
+                        '$avg': '$altitude'
+                    }, 
+                    'range': {
+                        '$subtract': [
+                            {
+                                '$max': '$altitude'
+                            }, {
+                                '$min': '$altitude'
+                            }
+                        ]
+                    }
+                }
+            }
+        ]))
         except Exception as e:
-            msg = int(e)
-            print("altitudeMMAR error ",msg)            
+            msg = str(e)
+            print("MMAS error ",msg)            
         else:                  
             return result
     
+    def heatindexMMAR(self,start, end):
+        '''RETURNS MIN, MAX, AVG AND RANGE FOR ALTITUDE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
+        try:
+            start=int(start)
+            end=int(end)
+            remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
+            result      = list(remotedb.ELET2415.weather.aggregate( [
+            {
+                '$match': {
+                    'timestamp': {
+                        '$gte': start, 
+                        '$lte': end
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': 'heatindex', 
+                    'pressure': {
+                        '$push': "$$ROOT.heatindex"
+                    }
+                }
+            }, {
+                '$project': {
+                    'max': {
+                        '$max': '$heatindex'
+                    }, 
+                    'min': {
+                        '$min': '$heatindex'
+                    }, 
+                    'avg': {
+                        '$avg': 'heatindex'
+                    }, 
+                    'range': {
+                        '$subtract': [
+                            {
+                                '$max': '$heatindex'
+                            }, {
+                                '$min': '$heatindex'
+                            }
+                        ]
+                    }
+                }
+            }
+        ]))
+        except Exception as e:
+            msg = str(e)
+            print("MMAS error ",msg)            
+        else:                  
+            return result
+
     def soilmoistureMMAR(self,start, end):
         '''RETURNS MIN, MAX, AVG AND RANGE FOR SOIL MOISTURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
-            start = int(start)
-            end = int(end)
-
+            start=int(start)
+            end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
             result      = list(remotedb.ELET2415.weather.aggregate( [
             {
@@ -196,8 +330,7 @@ class DB:
                     'avg': {
                         '$avg': '$soilmoisture'
                     }, 
-                    'range': {
-                        '$subtract': [
+                    'range': {'$subtract': [
                             {
                                 '$max': '$soilmoisture'
                             }, {
@@ -208,20 +341,22 @@ class DB:
                 }
             }
         ]))
+
         except Exception as e:
-            msg = int(e)
-            print("moistureMMAR error ",msg)            
-        else:                  
+            msg = str(e)
+            print("soilmoistureMMAS error ",msg)
+        else:
             return result
-    
+            
+
 
     def frequencyDistro(self,variable,start, end):
         '''RETURNS THE FREQUENCY DISTROBUTION FOR A SPECIFIED VARIABLE WITHIN THE START AND END DATE RANGE'''
         try:
-            start = int(start)
-            end = int(end)
+            start=int(start)
+            end=int(end)
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
-            result      = list(remotedb.ELET2415.weather.aggregate( [{
+            result      = list(remotedb.ELET2415.weather.aggregate([{
                             '$match': {
                             'timestamp': { '$gte': start, '$lte': end}
                             }
@@ -242,7 +377,27 @@ class DB:
             print("frequencyDistro error ",msg)            
         else:                  
             return result
-        
-       
+
+
 
    
+
+
+
+def main():
+    from config import Config
+    from time import time, ctime, sleep
+    from math import floor
+    from datetime import datetime, timedelta
+    one = DB(Config)
+ 
+ 
+    start = time() 
+    end = time()
+    print(f"completed in: {end - start} seconds")
+    
+if __name__ == '__main__':
+    main()
+
+
+    
