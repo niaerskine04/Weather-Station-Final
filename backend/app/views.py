@@ -94,6 +94,24 @@ def get_humidity_mmar(start,end):
     # FILE DATA NOT EXIST
     return jsonify({"status":"not found","data":[]})
 
+@app.route('/api/mmar/heatindex/<start>/<end>', methods=['GET']) 
+def get_heatindex_mmar(start,end):   
+    '''RETURNS MIN, MAX, AVG AND RANGE FOR ALTITUDE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
+    start = int(start)
+    end = int(end) 
+    if request.method == "GET": 
+        '''Add your code here to complete this route'''
+        try:
+            items = mongo.heatindexMMAR(start,end)
+            data = list(items)
+            if data:
+                return jsonify({"status":"data", "found": data})
+            
+        except Exception as e:
+            print(f"get_heatindex error: f{str(e)}") 
+    # FILE DATA NOT EXIST
+    return jsonify({"status":"not found","data":[]})
+
 @app.route('/api/mmar/pressure/<start>/<end>', methods=['GET']) 
 def get_pressure_mmar(start,end):   
     '''RETURNS MIN, MAX, AVG AND RANGE FOR PRESSURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
@@ -130,27 +148,29 @@ def get_altitude_mmar(start,end):
     # FILE DATA NOT EXIST
     return jsonify({"status":"not found","data":[]})
 
+
+
 @app.route('/api/mmar/soilmoisture/<start>/<end>', methods=['GET']) 
 def get_soilmoisture_mmar(start,end):   
     '''RETURNS MIN, MAX, AVG AND RANGE FOR SOIL MOISTURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
     start = int(start)
     end = int(end) 
-    print(f"Start Date: {start}")
-    print(f"End Date: {end}")
-    print(type(start))
-    print(type(end))  
+    # print(f"Start Date: {start}")
+    # print(f"End Date: {end}")
+    # print(type(start))
+    # print(type(end))  
     if request.method == "GET": 
         '''Add your code here to complete this route'''
         try:
             items = mongo.soilmoistureMMAR(start,end)
-            data = list(items)
+            # data = list(items)
             if items:
                 return jsonify({"status":"data", "found": data})
             
         except Exception as e:
             print(f"get_soilmoisture error: f{str(e)}") 
     # FILE DATA NOT EXIST
-    return jsonify({"status":"not found","data":[]})
+        return jsonify({"status":"not found","data":[]})
 
 
 

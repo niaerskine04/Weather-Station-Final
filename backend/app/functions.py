@@ -111,7 +111,24 @@ class DB:
             print("temperatureMMAR error ",msg)            
         else:                  
             return result
-
+        
+    def heatindexMMAR(self,start, end):
+        '''RETURNS MIN, MAX, AVG AND RANGE FOR PRESSURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
+        try:
+            start = int(start)
+            end = int(end)
+            remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
+            result      = list(remotedb.ELET2415.weather.aggregate( [
+                {'$match': {'timestamp': {'$gte': start, '$lte': end}}},
+                {'$group': {'_id':0, 'heatindex': {'$push': '$$ROOT.heatindex'}}},
+                {'$project': {'max': {'$max': '$heatindex'}, 'min': {'$min': '$heatindex'}, 'avg': {'$avg': '$pressure'}, 
+                              'range': {'$subtract': [{'$max': '$heatindex'}, {'$min': '$heatindex'}]}}}]))
+        except Exception as e:
+            msg = int(e)
+            print("heatindexMMAR error ",msg)            
+        else:                  
+            return result
+        
     def pressureMMAR(self,start, end):
         '''RETURNS MIN, MAX, AVG AND RANGE FOR PRESSURE. THAT FALLS WITHIN THE START AND END DATE RANGE'''
         try:
@@ -154,10 +171,43 @@ class DB:
 
             remotedb 	= self.remoteMongo('mongodb://%s:%s@%s:%s' % (self.username, self.password,self.server,self.port), tls=self.tls)
             result      = list(remotedb.ELET2415.weather.aggregate( [
-                {'$match': {'timestamp': {'$gte': start, '$lte': end}}},
-                {'$group': {'_id':0, 'soilmoisture': {'$push': '$$ROOT.soilmoisture'}}},
-                {'$project': {'max': {'$max': '$soilmoisture'}, 'min': {'$min': '$soilmoisture'}, 'avg': {'$avg': '$soilmoisture'}, 
-                              'range': {'$subtract': [{'$max': '$soilmoisture'}, {'$min': 'soilmoisture'}]}}}]))
+            {
+                '$match': {
+                    'timestamp': {
+                        '$gte': start, 
+                        '$lte': end
+                    }
+                }
+            }, {
+                '$group': {
+                    '_id': 'soilmoisture',
+                    'soilmoisture': {
+                        '$push': "$$ROOT.soilmoisture"
+                    }
+                }
+            }, {
+                '$project': {
+                    'max': {
+                        '$max': '$soilmoisture'
+                    }, 
+                    'min': {
+                        '$min': '$soilmoisture'
+                    }, 
+                    'avg': {
+                        '$avg': '$soilmoisture'
+                    }, 
+                    'range': {
+                        '$subtract': [
+                            {
+                                '$max': '$soilmoisture'
+                            }, {
+                                '$min': '$soilmoisture'
+                            }
+                        ]
+                    }
+                }
+            }
+        ]))
         except Exception as e:
             msg = int(e)
             print("moistureMMAR error ",msg)            
